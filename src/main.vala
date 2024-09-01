@@ -94,8 +94,14 @@ public class Main : Application {
     public void on_sysmon_activate(Gtk.MenuItem source) {
         var settings = this.settingscache.generalsettings();
         var sysmon = settings.get_string("system-monitor");
-        if (sysmon.length == 0)
-            sysmon = "gnome-system-monitor.desktop";
+        if (sysmon.length == 0) {
+            if (Environment.get_variable("XDG_CURRENT_DESKTOP") == "KDE" ||
+                Environment.get_variable("DESKTOP_SESSION") == "kde-plasma") {
+                sysmon = "kde4-ksysguard.desktop";
+            } else {
+                sysmon = "gnome-system-monitor.desktop";
+            }
+        }
         var info = new DesktopAppInfo(sysmon);
         if (info != null) {
             try {
@@ -370,8 +376,11 @@ public class Main : Application {
         Intl.textdomain(Config.GETTEXT_PACKAGE);
 
         // needs to happen before get_system_data_dirs is called the first time
-        var template = "/var/lock/multiload-icons-XXXXXX".dup();
-        Main.datadirectory = DirUtils.mkdtemp(template);
+        var directory = Environment.get_variable("XDG_RUNTIME_DIR");
+        if (directory == null || directory.length == 0) {
+            directory = "/var/lock";
+        }
+        Main.datadirectory = DirUtils.mkdtemp(directory + "/multiload-icons-XXXXXX");
         var xdgdatadirs = Environment.get_variable("XDG_DATA_DIRS");
         if (xdgdatadirs.length > 0)
             xdgdatadirs += ":";

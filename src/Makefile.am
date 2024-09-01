@@ -52,7 +52,7 @@ indicator_multiload_SOURCES = \
 indicator_multiload_LDFLAGS = \
 	-Wl,--export-dynamic -Wl,--as-needed
 
-indicator_multiload_LDADD = $(MULTILOADDEPS_LIBS)
+indicator_multiload_LDADD = $(MULTILOADDEPS_LIBS) -lm
 
 DISTCLEANFILES = \
 	$(indicator_multiload_VALASOURCES:.vala=.c) indicator_multiload_vala.stamp
